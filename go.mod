@@ -2,7 +2,7 @@ module github.com/tasksolo/gosolo
 
 go 1.19
 
-require github.com/firestuff/patchy v0.0.0-20230404031608-6c0fdfa87b6c
+require github.com/firestuff/patchy v0.0.0-20230404182342-782f53f9a119
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
