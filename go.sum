@@ -6,8 +6,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dchest/uniuri v1.2.0 h1:koIcOUdrTIivZgSLhHQvKgqdWZq5d7KdMEWF1Ud6+5g=
 github.com/dchest/uniuri v1.2.0/go.mod h1:fSzm4SLHzNZvWLvWJew423PhAzkpNQYq+uNLq4kxhkY=
-github.com/firestuff/patchy v0.0.0-20230403235223-bd495b8a5832 h1:WdEVylZNAoXWju9IrxI2oAqxsZ67QsafDT0RlyPxvXU=
-github.com/firestuff/patchy v0.0.0-20230403235223-bd495b8a5832/go.mod h1:9g6gvCBZb0xWiLOkHn9Z70oQoBRq0Tu9y1swd2uU6Dk=
+github.com/firestuff/patchy v0.0.0-20230404031608-6c0fdfa87b6c h1:9cwX8hDpgx1T6U4pfBIDp/YshZaLctXRyr1ZfEwhnAM=
+github.com/firestuff/patchy v0.0.0-20230404031608-6c0fdfa87b6c/go.mod h1:9g6gvCBZb0xWiLOkHn9Z70oQoBRq0Tu9y1swd2uU6Dk=
 github.com/getkin/kin-openapi v0.115.0 h1:c8WHRLVY3G8m9jQTy0/DnIuljgRwTCB5twZytQS4JyU=
 github.com/getkin/kin-openapi v0.115.0/go.mod h1:l5e9PaFUo9fyLJCPGQeXI2ML8c3P8BHOEV2VaAVf/pc=
 github.com/go-openapi/jsonpointer v0.19.5/go.mod h1:Pl9vOtqEWErmShwVjC8pYs9cog34VGT37dQOVbmoatg=
