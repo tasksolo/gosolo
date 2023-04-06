@@ -16,4 +16,4 @@ todo:
 	-git grep -e TODO --and --not -e ignoretodo
 
 update-client: && default
-	curl --silent --output client.go 'https://api.solø.com/v1/_goclient?packageName=gosolo'
+	curl --silent --output client.go 'https://api.solø.com/v1/_client.go?packageName=gosolo'

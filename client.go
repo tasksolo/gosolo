@@ -1,3 +1,5 @@
+// Solø API client
+
 package gosolo
 
 import (
@@ -6,7 +8,7 @@ import (
 	"net/url"
 	"time"
 
-	// External
+	//
 	"github.com/firestuff/patchy/patchyc"
 )
 
