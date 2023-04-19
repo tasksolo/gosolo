@@ -9,6 +9,7 @@ import (
 	"time"
 
 	//
+	"github.com/firestuff/patchy/metadata"
 	"github.com/firestuff/patchy/patchyc"
 )
 
@@ -19,28 +20,41 @@ type (
 	UpdateOpts = patchyc.UpdateOpts
 )
 
-type Task struct {
-	ID         string     `json:"id"`
-	ETag       string     `json:"etag"`
-	Generation int64      `json:"generation"`
-	UserID     *string    `json:"userID"`
-	Name       *string    `json:"name"`
-	Complete   *bool      `json:"complete"`
-	After      *time.Time `json:"after"`
+type TaskResponse struct {
+	metadata.Metadata
+	UserID   *string    `json:"userID"`
+	Name     *string    `json:"name"`
+	Complete *bool      `json:"complete"`
+	After    *time.Time `json:"after"`
 }
 
-type Token struct {
-	ID         string  `json:"id"`
-	ETag       string  `json:"etag"`
-	Generation int64   `json:"generation"`
-	UserID     *string `json:"userID"`
-	Token      *string `json:"token"`
+type TaskRequest struct {
+	UserID   *string    `json:"userID"`
+	Name     *string    `json:"name"`
+	Complete *bool      `json:"complete"`
+	After    *time.Time `json:"after"`
 }
 
-type User struct {
-	ID           string  `json:"id"`
-	ETag         string  `json:"etag"`
-	Generation   int64   `json:"generation"`
+type TokenResponse struct {
+	metadata.Metadata
+	UserID *string `json:"userID"`
+	Token  *string `json:"token"`
+}
+
+type TokenRequest struct {
+	UserID *string `json:"userID"`
+	Token  *string `json:"token"`
+}
+
+type UserResponse struct {
+	metadata.Metadata
+	Name         *string `json:"name"`
+	Email        *string `json:"email"`
+	Password     *string `json:"password"`
+	ServiceAdmin *bool   `json:"serviceAdmin"`
+}
+
+type UserRequest struct {
 	Name         *string `json:"name"`
 	Email        *string `json:"email"`
 	Password     *string `json:"password"`
@@ -84,154 +98,154 @@ func (c *Client) SetAuthToken(token string) *Client {
 
 //// Task
 
-func (c *Client) CreateTask(ctx context.Context, obj *Task) (*Task, error) {
-	return CreateName[Task](ctx, c, "task", obj)
+func (c *Client) CreateTask(ctx context.Context, obj *TaskRequest) (*TaskResponse, error) {
+	return CreateName[TaskResponse, TaskRequest](ctx, c, "task", obj)
 }
 
 func (c *Client) DeleteTask(ctx context.Context, id string, opts *UpdateOpts) error {
-	return DeleteName[Task](ctx, c, "task", id, opts)
+	return DeleteName[TaskResponse](ctx, c, "task", id, opts)
 }
 
-func (c *Client) FindTask(ctx context.Context, shortID string) (*Task, error) {
-	return FindName[Task](ctx, c, "task", shortID)
+func (c *Client) FindTask(ctx context.Context, shortID string) (*TaskResponse, error) {
+	return FindName[TaskResponse](ctx, c, "task", shortID)
 }
 
-func (c *Client) GetTask(ctx context.Context, id string, opts *GetOpts) (*Task, error) {
-	return GetName[Task](ctx, c, "task", id, opts)
+func (c *Client) GetTask(ctx context.Context, id string, opts *GetOpts) (*TaskResponse, error) {
+	return GetName[TaskResponse](ctx, c, "task", id, opts)
 }
 
-func (c *Client) ListTask(ctx context.Context, opts *ListOpts) ([]*Task, error) {
-	return ListName[Task](ctx, c, "task", opts)
+func (c *Client) ListTask(ctx context.Context, opts *ListOpts) ([]*TaskResponse, error) {
+	return ListName[TaskResponse](ctx, c, "task", opts)
 }
 
-func (c *Client) ReplaceTask(ctx context.Context, id string, obj *Task, opts *UpdateOpts) (*Task, error) {
-	return ReplaceName[Task](ctx, c, "task", id, obj, opts)
+func (c *Client) ReplaceTask(ctx context.Context, id string, obj *TaskRequest, opts *UpdateOpts) (*TaskResponse, error) {
+	return ReplaceName[TaskResponse, TaskRequest](ctx, c, "task", id, obj, opts)
 }
 
-func (c *Client) UpdateTask(ctx context.Context, id string, obj *Task, opts *UpdateOpts) (*Task, error) {
-	return UpdateName[Task](ctx, c, "task", id, obj, opts)
+func (c *Client) UpdateTask(ctx context.Context, id string, obj *TaskRequest, opts *UpdateOpts) (*TaskResponse, error) {
+	return UpdateName[TaskResponse, TaskRequest](ctx, c, "task", id, obj, opts)
 }
 
-func (c *Client) StreamGetTask(ctx context.Context, id string, opts *GetOpts) (*patchyc.GetStream[Task], error) {
-	return StreamGetName[Task](ctx, c, "task", id, opts)
+func (c *Client) StreamGetTask(ctx context.Context, id string, opts *GetOpts) (*patchyc.GetStream[TaskResponse], error) {
+	return StreamGetName[TaskResponse](ctx, c, "task", id, opts)
 }
 
-func (c *Client) StreamListTask(ctx context.Context, opts *ListOpts) (*patchyc.ListStream[Task], error) {
-	return StreamListName[Task](ctx, c, "task", opts)
+func (c *Client) StreamListTask(ctx context.Context, opts *ListOpts) (*patchyc.ListStream[TaskResponse], error) {
+	return StreamListName[TaskResponse](ctx, c, "task", opts)
 }
 
 //// Token
 
-func (c *Client) CreateToken(ctx context.Context, obj *Token) (*Token, error) {
-	return CreateName[Token](ctx, c, "token", obj)
+func (c *Client) CreateToken(ctx context.Context, obj *TokenRequest) (*TokenResponse, error) {
+	return CreateName[TokenResponse, TokenRequest](ctx, c, "token", obj)
 }
 
 func (c *Client) DeleteToken(ctx context.Context, id string, opts *UpdateOpts) error {
-	return DeleteName[Token](ctx, c, "token", id, opts)
+	return DeleteName[TokenResponse](ctx, c, "token", id, opts)
 }
 
-func (c *Client) FindToken(ctx context.Context, shortID string) (*Token, error) {
-	return FindName[Token](ctx, c, "token", shortID)
+func (c *Client) FindToken(ctx context.Context, shortID string) (*TokenResponse, error) {
+	return FindName[TokenResponse](ctx, c, "token", shortID)
 }
 
-func (c *Client) GetToken(ctx context.Context, id string, opts *GetOpts) (*Token, error) {
-	return GetName[Token](ctx, c, "token", id, opts)
+func (c *Client) GetToken(ctx context.Context, id string, opts *GetOpts) (*TokenResponse, error) {
+	return GetName[TokenResponse](ctx, c, "token", id, opts)
 }
 
-func (c *Client) ListToken(ctx context.Context, opts *ListOpts) ([]*Token, error) {
-	return ListName[Token](ctx, c, "token", opts)
+func (c *Client) ListToken(ctx context.Context, opts *ListOpts) ([]*TokenResponse, error) {
+	return ListName[TokenResponse](ctx, c, "token", opts)
 }
 
-func (c *Client) ReplaceToken(ctx context.Context, id string, obj *Token, opts *UpdateOpts) (*Token, error) {
-	return ReplaceName[Token](ctx, c, "token", id, obj, opts)
+func (c *Client) ReplaceToken(ctx context.Context, id string, obj *TokenRequest, opts *UpdateOpts) (*TokenResponse, error) {
+	return ReplaceName[TokenResponse, TokenRequest](ctx, c, "token", id, obj, opts)
 }
 
-func (c *Client) UpdateToken(ctx context.Context, id string, obj *Token, opts *UpdateOpts) (*Token, error) {
-	return UpdateName[Token](ctx, c, "token", id, obj, opts)
+func (c *Client) UpdateToken(ctx context.Context, id string, obj *TokenRequest, opts *UpdateOpts) (*TokenResponse, error) {
+	return UpdateName[TokenResponse, TokenRequest](ctx, c, "token", id, obj, opts)
 }
 
-func (c *Client) StreamGetToken(ctx context.Context, id string, opts *GetOpts) (*patchyc.GetStream[Token], error) {
-	return StreamGetName[Token](ctx, c, "token", id, opts)
+func (c *Client) StreamGetToken(ctx context.Context, id string, opts *GetOpts) (*patchyc.GetStream[TokenResponse], error) {
+	return StreamGetName[TokenResponse](ctx, c, "token", id, opts)
 }
 
-func (c *Client) StreamListToken(ctx context.Context, opts *ListOpts) (*patchyc.ListStream[Token], error) {
-	return StreamListName[Token](ctx, c, "token", opts)
+func (c *Client) StreamListToken(ctx context.Context, opts *ListOpts) (*patchyc.ListStream[TokenResponse], error) {
+	return StreamListName[TokenResponse](ctx, c, "token", opts)
 }
 
 //// User
 
-func (c *Client) CreateUser(ctx context.Context, obj *User) (*User, error) {
-	return CreateName[User](ctx, c, "user", obj)
+func (c *Client) CreateUser(ctx context.Context, obj *UserRequest) (*UserResponse, error) {
+	return CreateName[UserResponse, UserRequest](ctx, c, "user", obj)
 }
 
 func (c *Client) DeleteUser(ctx context.Context, id string, opts *UpdateOpts) error {
-	return DeleteName[User](ctx, c, "user", id, opts)
+	return DeleteName[UserResponse](ctx, c, "user", id, opts)
 }
 
-func (c *Client) FindUser(ctx context.Context, shortID string) (*User, error) {
-	return FindName[User](ctx, c, "user", shortID)
+func (c *Client) FindUser(ctx context.Context, shortID string) (*UserResponse, error) {
+	return FindName[UserResponse](ctx, c, "user", shortID)
 }
 
-func (c *Client) GetUser(ctx context.Context, id string, opts *GetOpts) (*User, error) {
-	return GetName[User](ctx, c, "user", id, opts)
+func (c *Client) GetUser(ctx context.Context, id string, opts *GetOpts) (*UserResponse, error) {
+	return GetName[UserResponse](ctx, c, "user", id, opts)
 }
 
-func (c *Client) ListUser(ctx context.Context, opts *ListOpts) ([]*User, error) {
-	return ListName[User](ctx, c, "user", opts)
+func (c *Client) ListUser(ctx context.Context, opts *ListOpts) ([]*UserResponse, error) {
+	return ListName[UserResponse](ctx, c, "user", opts)
 }
 
-func (c *Client) ReplaceUser(ctx context.Context, id string, obj *User, opts *UpdateOpts) (*User, error) {
-	return ReplaceName[User](ctx, c, "user", id, obj, opts)
+func (c *Client) ReplaceUser(ctx context.Context, id string, obj *UserRequest, opts *UpdateOpts) (*UserResponse, error) {
+	return ReplaceName[UserResponse, UserRequest](ctx, c, "user", id, obj, opts)
 }
 
-func (c *Client) UpdateUser(ctx context.Context, id string, obj *User, opts *UpdateOpts) (*User, error) {
-	return UpdateName[User](ctx, c, "user", id, obj, opts)
+func (c *Client) UpdateUser(ctx context.Context, id string, obj *UserRequest, opts *UpdateOpts) (*UserResponse, error) {
+	return UpdateName[UserResponse, UserRequest](ctx, c, "user", id, obj, opts)
 }
 
-func (c *Client) StreamGetUser(ctx context.Context, id string, opts *GetOpts) (*patchyc.GetStream[User], error) {
-	return StreamGetName[User](ctx, c, "user", id, opts)
+func (c *Client) StreamGetUser(ctx context.Context, id string, opts *GetOpts) (*patchyc.GetStream[UserResponse], error) {
+	return StreamGetName[UserResponse](ctx, c, "user", id, opts)
 }
 
-func (c *Client) StreamListUser(ctx context.Context, opts *ListOpts) (*patchyc.ListStream[User], error) {
-	return StreamListName[User](ctx, c, "user", opts)
+func (c *Client) StreamListUser(ctx context.Context, opts *ListOpts) (*patchyc.ListStream[UserResponse], error) {
+	return StreamListName[UserResponse](ctx, c, "user", opts)
 }
 
 //// Generic
 
-func CreateName[T any](ctx context.Context, c *Client, name string, obj *T) (*T, error) {
-	return patchyc.CreateName[T](ctx, c.patchyClient, name, obj)
+func CreateName[TOut, TIn any](ctx context.Context, c *Client, name string, obj *TIn) (*TOut, error) {
+	return patchyc.CreateName[TOut, TIn](ctx, c.patchyClient, name, obj)
 }
 
-func DeleteName[T any](ctx context.Context, c *Client, name, id string, opts *UpdateOpts) error {
-	return patchyc.DeleteName[T](ctx, c.patchyClient, name, id, opts)
+func DeleteName[TOut any](ctx context.Context, c *Client, name, id string, opts *UpdateOpts) error {
+	return patchyc.DeleteName[TOut](ctx, c.patchyClient, name, id, opts)
 }
 
-func FindName[T any](ctx context.Context, c *Client, name, shortID string) (*T, error) {
-	return patchyc.FindName[T](ctx, c.patchyClient, name, shortID)
+func FindName[TOut any](ctx context.Context, c *Client, name, shortID string) (*TOut, error) {
+	return patchyc.FindName[TOut](ctx, c.patchyClient, name, shortID)
 }
 
-func GetName[T any](ctx context.Context, c *Client, name, id string, opts *GetOpts) (*T, error) {
-	return patchyc.GetName[T](ctx, c.patchyClient, name, id, opts)
+func GetName[TOut any](ctx context.Context, c *Client, name, id string, opts *GetOpts) (*TOut, error) {
+	return patchyc.GetName[TOut](ctx, c.patchyClient, name, id, opts)
 }
 
-func ListName[T any](ctx context.Context, c *Client, name string, opts *ListOpts) ([]*T, error) {
-	return patchyc.ListName[T](ctx, c.patchyClient, name, opts)
+func ListName[TOut any](ctx context.Context, c *Client, name string, opts *ListOpts) ([]*TOut, error) {
+	return patchyc.ListName[TOut](ctx, c.patchyClient, name, opts)
 }
 
-func ReplaceName[T any](ctx context.Context, c *Client, name, id string, obj *T, opts *UpdateOpts) (*T, error) {
-	return patchyc.ReplaceName[T](ctx, c.patchyClient, name, id, obj, opts)
+func ReplaceName[TOut, TIn any](ctx context.Context, c *Client, name, id string, obj *TIn, opts *UpdateOpts) (*TOut, error) {
+	return patchyc.ReplaceName[TOut, TIn](ctx, c.patchyClient, name, id, obj, opts)
 }
 
-func UpdateName[T any](ctx context.Context, c *Client, name, id string, obj *T, opts *UpdateOpts) (*T, error) {
-	return patchyc.UpdateName[T](ctx, c.patchyClient, name, id, obj, opts)
+func UpdateName[TOut, TIn any](ctx context.Context, c *Client, name, id string, obj *TIn, opts *UpdateOpts) (*TOut, error) {
+	return patchyc.UpdateName[TOut, TIn](ctx, c.patchyClient, name, id, obj, opts)
 }
 
-func StreamGetName[T any](ctx context.Context, c *Client, name, id string, opts *GetOpts) (*patchyc.GetStream[T], error) {
-	return patchyc.StreamGetName[T](ctx, c.patchyClient, name, id, opts)
+func StreamGetName[TOut any](ctx context.Context, c *Client, name, id string, opts *GetOpts) (*patchyc.GetStream[TOut], error) {
+	return patchyc.StreamGetName[TOut](ctx, c.patchyClient, name, id, opts)
 }
 
-func StreamListName[T any](ctx context.Context, c *Client, name string, opts *ListOpts) (*patchyc.ListStream[T], error) {
-	return patchyc.StreamListName[T](ctx, c.patchyClient, name, opts)
+func StreamListName[TOut any](ctx context.Context, c *Client, name string, opts *ListOpts) (*patchyc.ListStream[TOut], error) {
+	return patchyc.StreamListName[TOut](ctx, c.patchyClient, name, opts)
 }
 
 //// Utility generic
@@ -239,3 +253,5 @@ func StreamListName[T any](ctx context.Context, c *Client, name string, opts *Li
 func P[T any](v T) *T {
 	return patchyc.P(v)
 }
+
+// vim: set filetype=go:
