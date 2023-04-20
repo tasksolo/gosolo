@@ -18,8 +18,8 @@ github.com/gopatchy/jsrest v0.0.0-20230420184928-8e3c5df83e40 h1:O81TZmmHcnaiygH
 github.com/gopatchy/jsrest v0.0.0-20230420184928-8e3c5df83e40/go.mod h1:Ryi8LRBLFDhQsMQHuh+6VL7HcFWjBXOEiOy9Ip/Q+Ps=
 github.com/gopatchy/metadata v0.0.0-20230420053349-25837551c11d h1:chunoM47vkWSanIvLx4uRSkLMG6chDZOy09L2tt/bv8=
 github.com/gopatchy/metadata v0.0.0-20230420053349-25837551c11d/go.mod h1:VgD33raUShjDePCDBo55aj+eSXFtUEpMzs+Ie39g2zo=
-github.com/gopatchy/patchyc v0.0.0-20230420191118-96825e74cd8a h1:EdRmpyIJBo2MGZdWmMxJv2g13UzpaHXXcgE1IPrbINY=
-github.com/gopatchy/patchyc v0.0.0-20230420191118-96825e74cd8a/go.mod h1:Q3gw6yJHl7mF8KNlrVCIA2HGeEwnq1/wGbIC92xoEGA=
+github.com/gopatchy/patchyc v0.0.0-20230420200652-5a1bc7fd59c3 h1:nHmi9vy+8dLLmDrCmPhGnzuri97VGrg2ATE2v2yak/w=
+github.com/gopatchy/patchyc v0.0.0-20230420200652-5a1bc7fd59c3/go.mod h1:gKOai2B95GQO8vofk07aK9yyRrW64VRxJUadNd6Th7o=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 github.com/invopop/yaml v0.1.0/go.mod h1:2XuRLgs/ouIrW3XNzuNj7J3Nvu/Dig5MXvbCEdiBN3Q=
 github.com/invopop/yaml v0.2.0 h1:7zky/qH+O0DwAyoobXUqvVBwgBFRxKoQ/3FjcVpjTMY=

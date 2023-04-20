@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/gopatchy/metadata v0.0.0-20230420053349-25837551c11d
-	github.com/gopatchy/patchyc v0.0.0-20230420191118-96825e74cd8a
+	github.com/gopatchy/patchyc v0.0.0-20230420200652-5a1bc7fd59c3
 )
 
 require (
