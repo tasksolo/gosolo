@@ -2,7 +2,10 @@ module github.com/tasksolo/gosolo
 
 go 1.19
 
-require github.com/firestuff/patchy v0.0.0-20230420164445-e49226ab9480
+require (
+	github.com/firestuff/patchy v0.0.0-20230420164902-45375f6d43d8
+	github.com/gopatchy/metadata v0.0.0-20230420053349-25837551c11d
+)
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
@@ -13,8 +16,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/gopatchy/header v0.0.0-20230420163217-190db9cc739a // indirect
 	github.com/gopatchy/jsrest v0.0.0-20230420161234-12a6d6da8b7f // indirect
-	github.com/gopatchy/metadata v0.0.0-20230420053349-25837551c11d // indirect
-	github.com/gopatchy/selfcert v0.0.0-20230420164110-f898281e19c7 // indirect
+	github.com/gopatchy/selfcert v0.0.0-20230420164828-e6e99d903058 // indirect
 	github.com/invopop/yaml v0.2.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/julienschmidt/httprouter v1.3.0 // indirect

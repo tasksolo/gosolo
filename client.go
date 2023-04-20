@@ -9,8 +9,8 @@ import (
 	"time"
 
 	//
-	"github.com/gopatchy/metadata"
 	"github.com/firestuff/patchy/patchyc"
+	"github.com/gopatchy/metadata"
 )
 
 type (
@@ -22,43 +22,43 @@ type (
 
 type TaskResponse struct {
 	metadata.Metadata
-	UserID   *string    `json:"userID"`
-	Name     *string    `json:"name"`
-	Complete *bool      `json:"complete"`
-	After    *time.Time `json:"after"`
+	UserID   *string    `json:"userID,omitempty"`
+	Name     *string    `json:"name,omitempty"`
+	Complete *bool      `json:"complete,omitempty"`
+	After    *time.Time `json:"after,omitempty"`
 }
 
 type TaskRequest struct {
-	UserID   *string    `json:"userID"`
-	Name     *string    `json:"name"`
-	Complete *bool      `json:"complete"`
-	After    *time.Time `json:"after"`
+	UserID   *string    `json:"userID,omitempty"`
+	Name     *string    `json:"name,omitempty"`
+	Complete *bool      `json:"complete,omitempty"`
+	After    *time.Time `json:"after,omitempty"`
 }
 
 type TokenResponse struct {
 	metadata.Metadata
-	UserID *string `json:"userID"`
-	Token  *string `json:"token"`
+	UserID *string `json:"userID,omitempty"`
+	Token  *string `json:"token,omitempty"`
 }
 
 type TokenRequest struct {
-	UserID *string `json:"userID"`
-	Token  *string `json:"token"`
+	UserID *string `json:"userID,omitempty"`
+	Token  *string `json:"token,omitempty"`
 }
 
 type UserResponse struct {
 	metadata.Metadata
-	Name         *string `json:"name"`
-	Email        *string `json:"email"`
-	Password     *string `json:"password"`
-	ServiceAdmin *bool   `json:"serviceAdmin"`
+	Name         *string `json:"name,omitempty"`
+	Email        *string `json:"email,omitempty"`
+	Password     *string `json:"password,omitempty"`
+	ServiceAdmin *bool   `json:"serviceAdmin,omitempty"`
 }
 
 type UserRequest struct {
-	Name         *string `json:"name"`
-	Email        *string `json:"email"`
-	Password     *string `json:"password"`
-	ServiceAdmin *bool   `json:"serviceAdmin"`
+	Name         *string `json:"name,omitempty"`
+	Email        *string `json:"email,omitempty"`
+	Password     *string `json:"password,omitempty"`
+	ServiceAdmin *bool   `json:"serviceAdmin,omitempty"`
 }
 
 type Client struct {
