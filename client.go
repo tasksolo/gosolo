@@ -9,7 +9,7 @@ import (
 	"time"
 
 	//
-	"github.com/firestuff/patchy/metadata"
+	"github.com/gopatchy/metadata"
 	"github.com/firestuff/patchy/patchyc"
 )
 
