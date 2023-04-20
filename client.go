@@ -9,8 +9,8 @@ import (
 	"time"
 
 	//
-	"github.com/firestuff/patchy/patchyc"
 	"github.com/gopatchy/metadata"
+	"github.com/gopatchy/patchyc"
 )
 
 type (
