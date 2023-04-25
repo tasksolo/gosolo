@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -456,6 +457,7 @@ func UpdateName[T any](ctx context.Context, c *Client, name, id string, obj *T, 
 
 func StreamGetName[T any](ctx context.Context, c *Client, name, id string, opts *GetOpts[T]) (*GetStream[T], error) {
 	r := c.rst.R().
+		SetContext(ctx).
 		SetDoNotParseResponse(true).
 		SetHeader("Accept", "text/event-stream").
 		SetPathParam("name", name).
@@ -487,7 +489,36 @@ func StreamGetName[T any](ctx context.Context, c *Client, name, id string, opts 
 }
 
 func StreamListName[T any](ctx context.Context, c *Client, name string, opts *ListOpts[T]) (*ListStream[T], error) {
+	ctx, cancel := context.WithCancel(ctx)
+
+	stream := &ListStream[T]{
+		ch:     make(chan []*T, 100),
+		cancel: cancel,
+	}
+
+	if opts != nil {
+		stream.prev = opts.Prev
+	}
+
+	b := backoff{}
+
+	go func() {
+		for ctx.Err() == nil {
+			err := streamListNameOnce[T](ctx, c, name, opts, stream)
+			stream.writeError(err)
+
+			b.failure(ctx)
+		}
+
+		close(stream.ch)
+	}()
+
+	return stream, nil
+}
+
+func streamListNameOnce[T any](ctx context.Context, c *Client, name string, opts *ListOpts[T], stream *ListStream[T]) error {
 	r := c.rst.R().
+		SetContext(ctx).
 		SetDoNotParseResponse(true).
 		SetHeader("Accept", "text/event-stream").
 		SetPathParam("name", name)
@@ -496,42 +527,35 @@ func StreamListName[T any](ctx context.Context, c *Client, name string, opts *Li
 		opts = &ListOpts[T]{}
 	}
 
+	opts.Prev = stream.prev
+
 	err := opts.apply(r)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	resp, err := r.Get("{name}")
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if resp.IsError() {
-		return nil, jsrest.ReadError(resp.Body())
+		return jsrest.ReadError(resp.Body())
 	}
 
-	stream := &ListStream[T]{
-		ch:   make(chan []*T, 100),
-		body: resp.RawBody(),
-	}
-
-	if opts != nil && opts.Prev != nil {
-		stream.prev = opts.Prev
-	}
+	stream.reset(resp.RawBody())
 
 	switch resp.Header().Get("Stream-Format") {
 	case "full":
-		go stream.processFull()
+		return stream.processFull()
 
 	case "diff":
-		go stream.processDiff()
+		return stream.processDiff()
 
 	default:
 		stream.Close()
-		return nil, fmt.Errorf("%s (%w)", resp.Header().Get("Stream-Format"), ErrInvalidStreamFormat)
+		return fmt.Errorf("%s (%w)", resp.Header().Get("Stream-Format"), ErrInvalidStreamFormat)
 	}
-
-	return stream, nil
 }
 
 type streamEvent[T any] struct {
@@ -704,11 +728,13 @@ func (gs *GetStream[T]) writeError(err error) {
 }
 
 type ListStream[T any] struct {
-	ch   chan []*T
-	body io.ReadCloser
-	prev []*T
+	ch     chan []*T
+	cancel context.CancelFunc
+	body   io.ReadCloser
+	prev   []*T
 
 	lastEventReceived time.Time
+	lastETag          string
 
 	err error
 
@@ -716,6 +742,7 @@ type ListStream[T any] struct {
 }
 
 func (ls *ListStream[T]) Close() {
+	ls.cancel()
 	ls.body.Close()
 }
 
@@ -741,23 +768,26 @@ func (ls *ListStream[T]) Error() error {
 	return ls.err
 }
 
-func (ls *ListStream[T]) processFull() {
+func (ls *ListStream[T]) reset(body io.ReadCloser) {
+	ls.body = body
+	ls.err = nil
+}
+
+func (ls *ListStream[T]) processFull() error {
 	scan := bufio.NewScanner(ls.body)
 	es := newEventStream[T](scan)
 
 	for {
 		event, err := es.readEvent()
 		if err != nil {
-			ls.writeError(err)
-			return
+			return err
 		}
 
 		switch event.eventType {
 		case "list":
 			list, err := event.decodeList()
 			if err != nil {
-				ls.writeError(err)
-				return
+				return err
 			}
 
 			setListETag(list, fmt.Sprintf(`"%s"`, event.params["id"]))
@@ -772,7 +802,7 @@ func (ls *ListStream[T]) processFull() {
 	}
 }
 
-func (ls *ListStream[T]) processDiff() {
+func (ls *ListStream[T]) processDiff() error {
 	scan := bufio.NewScanner(ls.body)
 	es := newEventStream[T](scan)
 	list := []*T{}
@@ -807,45 +837,54 @@ func (ls *ListStream[T]) processDiff() {
 	for {
 		event, err := es.readEvent()
 		if err != nil {
-			ls.writeError(err)
-			return
+			return err
 		}
 
 		switch event.eventType {
 		case "add":
 			err = add(event)
 			if err != nil {
-				ls.writeError(err)
-				return
+				return err
 			}
 
 		case "update":
 			err = remove(event)
 			if err != nil {
-				ls.writeError(err)
-				return
+				return err
 			}
 
 			err = add(event)
 			if err != nil {
-				ls.writeError(err)
-				return
+				return err
 			}
 
 		case "remove":
 			err = remove(event)
 			if err != nil {
-				ls.writeError(err)
-				return
+				return err
 			}
 
 		case "sync":
 			setListETag(list, fmt.Sprintf(`"%s"`, event.params["id"]))
-			ls.writeEvent(list)
+
+			// Write a copy since we mutate list
+			tmp, err := ls.clone(list)
+			if err != nil {
+				return err
+			}
+
+			ls.writeEvent(tmp)
 
 		case "notModified":
 			list = ls.prev
-			ls.writeEvent(list)
+
+			// Write a copy since we mutate list
+			tmp, err := ls.clone(list)
+			if err != nil {
+				return err
+			}
+
+			ls.writeEvent(tmp)
 
 		case "heartbeat":
 			ls.writeHeartbeat()
@@ -861,8 +900,16 @@ func (ls *ListStream[T]) writeHeartbeat() {
 
 func (ls *ListStream[T]) writeEvent(list []*T) {
 	ls.mu.Lock()
+	defer ls.mu.Unlock()
+
 	ls.lastEventReceived = time.Now()
-	ls.mu.Unlock()
+
+	etag := getListETag(list)
+	if etag != "" && etag == ls.lastETag {
+		// Skip duplicates
+		return
+	}
+	ls.lastETag = etag
 
 	ls.ch <- list
 }
@@ -871,8 +918,24 @@ func (ls *ListStream[T]) writeError(err error) {
 	ls.mu.Lock()
 	ls.err = err
 	ls.mu.Unlock()
+}
 
-	close(ls.ch)
+func (ls *ListStream[T]) clone(list []*T) ([]*T, error) {
+	js, err := json.Marshal(list)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := []*T{}
+
+	err = json.Unmarshal(js, &ret)
+	if err != nil {
+		return nil, err
+	}
+
+	setListETag(ret, getListETag(list))
+
+	return ret, nil
 }
 
 //// Internal
@@ -991,4 +1054,45 @@ func setListETag[T any](list []*T, etag string) {
 
 func getListETagField[T any](list []*T) reflect.Value {
 	return reflect.Indirect(reflect.ValueOf(list[0])).FieldByName("ListETag")
+}
+
+type backoff struct {
+	delay       time.Duration
+	lastFailure time.Time
+}
+
+const minDelay = 1 * time.Second
+const maxDelay = 60 * time.Second
+
+func (b *backoff) failure(ctx context.Context) {
+	if !b.lastFailure.IsZero() {
+		// Credit for time since last delay
+		b.delay -= time.Since(b.lastFailure)
+	}
+
+	b.lastFailure = time.Now()
+
+	// Increase for current failure
+	b.delay *= 2
+
+	// Minimum bound
+	if b.delay < minDelay {
+		b.delay = minDelay
+	}
+
+	// Maximum bound
+	if b.delay > maxDelay {
+		b.delay = maxDelay
+	}
+
+	// Full jitter
+	actualDelay := time.Duration(rand.Int63n(int64(b.delay)))
+
+	t := time.NewTimer(actualDelay)
+
+	select {
+	case <-ctx.Done():
+		t.Stop()
+	case <-t.C:
+	}
 }
