@@ -26,6 +26,14 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+type ShardServerConfig struct {
+	metadata.Metadata
+
+	ListETag   string `json:"-"`
+	ShardID    string `json:"shardID,omitempty"`
+	InstanceID string `json:"instanceID,omitempty"`
+}
+
 type Task struct {
 	metadata.Metadata
 
@@ -160,6 +168,44 @@ func (c *Client) GoClient(ctx context.Context) (string, error) {
 
 func (c *Client) TSClient(ctx context.Context) (string, error) {
 	return c.fetchString(ctx, "_client.ts")
+}
+
+//// ShardServerConfig
+
+func (c *Client) CreateShardServerConfig(ctx context.Context, obj *ShardServerConfig) (*ShardServerConfig, error) {
+	return CreateName[ShardServerConfig](ctx, c, "shardserverconfig", obj)
+}
+
+func (c *Client) DeleteShardServerConfig(ctx context.Context, id string, opts *UpdateOpts[ShardServerConfig]) error {
+	return DeleteName[ShardServerConfig](ctx, c, "shardserverconfig", id, opts)
+}
+
+func (c *Client) FindShardServerConfig(ctx context.Context, shortID string) (*ShardServerConfig, error) {
+	return FindName[ShardServerConfig](ctx, c, "shardserverconfig", shortID)
+}
+
+func (c *Client) GetShardServerConfig(ctx context.Context, id string, opts *GetOpts[ShardServerConfig]) (*ShardServerConfig, error) {
+	return GetName[ShardServerConfig](ctx, c, "shardserverconfig", id, opts)
+}
+
+func (c *Client) ListShardServerConfig(ctx context.Context, opts *ListOpts[ShardServerConfig]) ([]*ShardServerConfig, error) {
+	return ListName[ShardServerConfig](ctx, c, "shardserverconfig", opts)
+}
+
+func (c *Client) ReplaceShardServerConfig(ctx context.Context, id string, obj *ShardServerConfig, opts *UpdateOpts[ShardServerConfig]) (*ShardServerConfig, error) {
+	return ReplaceName[ShardServerConfig](ctx, c, "shardserverconfig", id, obj, opts)
+}
+
+func (c *Client) UpdateShardServerConfig(ctx context.Context, id string, obj *ShardServerConfig, opts *UpdateOpts[ShardServerConfig]) (*ShardServerConfig, error) {
+	return UpdateName[ShardServerConfig](ctx, c, "shardserverconfig", id, obj, opts)
+}
+
+func (c *Client) StreamGetShardServerConfig(ctx context.Context, id string, opts *GetOpts[ShardServerConfig]) (*GetStream[ShardServerConfig], error) {
+	return StreamGetName[ShardServerConfig](ctx, c, "shardserverconfig", id, opts)
+}
+
+func (c *Client) StreamListShardServerConfig(ctx context.Context, opts *ListOpts[ShardServerConfig]) (*ListStream[ShardServerConfig], error) {
+	return StreamListName[ShardServerConfig](ctx, c, "shardserverconfig", opts)
 }
 
 //// Task
