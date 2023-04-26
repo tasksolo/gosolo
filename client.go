@@ -110,8 +110,6 @@ func NewClient(baseURL string) *Client {
 		SetJSONEscapeHTML(false)
 
 	// TODO: SetTimeout()
-	// TODO: SetRetry*() or roll our own
-	// TODO: Add Idempotency-Key support
 
 	return &Client{
 		rst: rst,
@@ -327,6 +325,9 @@ func (c *Client) StreamListUser(ctx context.Context, opts *ListOpts[User]) (*Lis
 func CreateName[T any](ctx context.Context, c *Client, name string, obj *T) (*T, error) {
 	created := new(T)
 
+	// TODO: Set Idempotency-Key
+	// TODO: Split out CreateNameOnce, add retry loop
+
 	resp, err := c.rst.R().
 		SetContext(ctx).
 		SetPathParam("name", name).
@@ -338,7 +339,7 @@ func CreateName[T any](ctx context.Context, c *Client, name string, obj *T) (*T,
 	}
 
 	if resp.IsError() {
-		return nil, jsrest.ReadError(resp.Body())
+		return nil, jsrest.ReadError(resp)
 	}
 
 	return created, nil
@@ -350,6 +351,9 @@ func DeleteName[T any](ctx context.Context, c *Client, name, id string, opts *Up
 		SetPathParam("name", name).
 		SetPathParam("id", id)
 
+	// TODO: Set Idempotency-Key
+	// TODO: Split out DeleteNameOnce, add retry loop
+
 	opts.apply(r)
 
 	resp, err := r.Delete("{name}/{id}")
@@ -358,7 +362,7 @@ func DeleteName[T any](ctx context.Context, c *Client, name, id string, opts *Up
 	}
 
 	if resp.IsError() {
-		return jsrest.ReadError(resp.Body())
+		return jsrest.ReadError(resp)
 	}
 
 	return nil
@@ -400,6 +404,8 @@ func GetName[T any](ctx context.Context, c *Client, name, id string, opts *GetOp
 		SetPathParam("id", id).
 		SetResult(obj)
 
+	// TODO: Split out GetNameOnce, add retry loop
+
 	opts.apply(r)
 
 	resp, err := r.Get("{name}/{id}")
@@ -416,7 +422,7 @@ func GetName[T any](ctx context.Context, c *Client, name, id string, opts *GetOp
 	}
 
 	if resp.IsError() {
-		return nil, jsrest.ReadError(resp.Body())
+		return nil, jsrest.ReadError(resp)
 	}
 
 	return obj, nil
@@ -424,6 +430,8 @@ func GetName[T any](ctx context.Context, c *Client, name, id string, opts *GetOp
 
 func ListName[T any](ctx context.Context, c *Client, name string, opts *ListOpts[T]) ([]*T, error) {
 	objs := []*T{}
+
+	// TODO: Split out ListNameOnce, add retry loop
 
 	r := c.rst.R().
 		SetContext(ctx).
@@ -445,7 +453,7 @@ func ListName[T any](ctx context.Context, c *Client, name string, opts *ListOpts
 	}
 
 	if resp.IsError() {
-		return nil, jsrest.ReadError(resp.Body())
+		return nil, jsrest.ReadError(resp)
 	}
 
 	setListETag(objs, resp.Header().Get("ETag"))
@@ -455,6 +463,9 @@ func ListName[T any](ctx context.Context, c *Client, name string, opts *ListOpts
 
 func ReplaceName[T any](ctx context.Context, c *Client, name, id string, obj *T, opts *UpdateOpts[T]) (*T, error) {
 	replaced := new(T)
+
+	// TODO: Set Idempotency-Key
+	// TODO: Split out ReplaceNameOnce, add retry loop
 
 	r := c.rst.R().
 		SetContext(ctx).
@@ -471,7 +482,7 @@ func ReplaceName[T any](ctx context.Context, c *Client, name, id string, obj *T,
 	}
 
 	if resp.IsError() {
-		return nil, jsrest.ReadError(resp.Body())
+		return nil, jsrest.ReadError(resp)
 	}
 
 	return replaced, nil
@@ -479,6 +490,9 @@ func ReplaceName[T any](ctx context.Context, c *Client, name, id string, obj *T,
 
 func UpdateName[T any](ctx context.Context, c *Client, name, id string, obj *T, opts *UpdateOpts[T]) (*T, error) {
 	updated := new(T)
+
+	// TODO: Set Idempotency-Key
+	// TODO: Split out UpdateNameOnce, add retry loop
 
 	r := c.rst.R().
 		SetContext(ctx).
@@ -495,7 +509,7 @@ func UpdateName[T any](ctx context.Context, c *Client, name, id string, obj *T, 
 	}
 
 	if resp.IsError() {
-		return nil, jsrest.ReadError(resp.Body())
+		return nil, jsrest.ReadError(resp)
 	}
 
 	return updated, nil
@@ -509,6 +523,8 @@ func StreamGetName[T any](ctx context.Context, c *Client, name, id string, opts 
 		SetPathParam("name", name).
 		SetPathParam("id", id)
 
+	// TODO: Split out StreamGetNameOnce, add retry loop
+
 	opts.apply(r)
 
 	resp, err := r.Get("{name}/{id}")
@@ -517,7 +533,7 @@ func StreamGetName[T any](ctx context.Context, c *Client, name, id string, opts 
 	}
 
 	if resp.IsError() {
-		return nil, jsrest.ReadError(resp.Body())
+		return nil, jsrest.ReadError(resp)
 	}
 
 	stream := &GetStream[T]{
@@ -552,6 +568,7 @@ func StreamListName[T any](ctx context.Context, c *Client, name string, opts *Li
 		for ctx.Err() == nil {
 			err := streamListNameOnce[T](ctx, c, name, opts, stream)
 			stream.writeError(err)
+			// TODO: Differentiate between 4xx and 5xx errors, bail on 4xx
 
 			b.failure(ctx)
 		}
@@ -586,7 +603,7 @@ func streamListNameOnce[T any](ctx context.Context, c *Client, name string, opts
 	}
 
 	if resp.IsError() {
-		return jsrest.ReadError(resp.Body())
+		return jsrest.ReadError(resp)
 	}
 
 	stream.reset(resp.RawBody())
@@ -651,6 +668,8 @@ func newEventStream[T any](scan *bufio.Scanner) *eventStream[T] {
 func (es *eventStream[T]) readEvent() (*streamEvent[T], error) {
 	event := newStreamEvent[T]()
 	data := [][]byte{}
+
+	// TODO: Add a timeout (15s?) here that causes us to return error, closing the stream
 
 	for es.scan.Scan() {
 		line := es.scan.Text()
@@ -1061,7 +1080,7 @@ func (c *Client) fetchMap(ctx context.Context, path string) (map[string]any, err
 	}
 
 	if resp.IsError() {
-		return nil, jsrest.ReadError(resp.Body())
+		return nil, jsrest.ReadError(resp)
 	}
 
 	return ret, nil
@@ -1076,7 +1095,7 @@ func (c *Client) fetchString(ctx context.Context, path string) (string, error) {
 	}
 
 	if resp.IsError() {
-		return "", jsrest.ReadError(resp.Body())
+		return "", jsrest.ReadError(resp)
 	}
 
 	return resp.String(), nil
