@@ -59,6 +59,7 @@ type User struct {
 	Name              string `json:"name,omitempty"`
 	Email             string `json:"email,omitempty"`
 	Password          string `json:"password,omitempty"`
+	Shard             string `json:"shard,omitempty"`
 	ServiceAdmin      bool   `json:"serviceAdmin,omitempty"`
 	ReplicationClient bool   `json:"replicationClient,omitempty"`
 }
