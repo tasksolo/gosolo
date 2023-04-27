@@ -50,6 +50,7 @@ type Token struct {
 	ListETag string `json:"-"`
 	UserID   string `json:"userID,omitempty"`
 	Token    string `json:"token,omitempty"`
+	Shard    string `json:"shard,omitempty"`
 }
 
 type User struct {
@@ -976,6 +977,7 @@ func (ls *ListStream[T]) writeEvent(list []*T) {
 		// Skip duplicates
 		return
 	}
+
 	ls.lastETag = etag
 
 	ls.ch <- list
@@ -1128,8 +1130,10 @@ type backoff struct {
 	lastFailure time.Time
 }
 
-const minDelay = 1 * time.Second
-const maxDelay = 60 * time.Second
+const (
+	minDelay = 1 * time.Second
+	maxDelay = 60 * time.Second
+)
 
 func (b *backoff) failure(ctx context.Context) {
 	if !b.lastFailure.IsZero() {
@@ -1153,7 +1157,7 @@ func (b *backoff) failure(ctx context.Context) {
 	}
 
 	// Full jitter
-	actualDelay := time.Duration(rand.Int63n(int64(b.delay)))
+	actualDelay := time.Duration(rand.Int63n(int64(b.delay))) //nolint:gosec
 
 	t := time.NewTimer(actualDelay)
 
