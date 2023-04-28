@@ -568,15 +568,19 @@ func StreamListName[T any](ctx context.Context, c *Client, name string, opts *Li
 	b := backoff{}
 
 	go func() {
+		defer close(stream.ch)
+
 		for ctx.Err() == nil {
 			err := streamListNameOnce[T](ctx, c, name, opts, stream)
 			stream.writeError(err)
-			// TODO: Differentiate between 4xx and 5xx errors, bail on 4xx
+
+			hErr := jsrest.GetHTTPError(err)
+			if hErr != nil && hErr.Code/100 == 4 {
+				break
+			}
 
 			b.failure(ctx)
 		}
-
-		close(stream.ch)
 	}()
 
 	return stream, nil
