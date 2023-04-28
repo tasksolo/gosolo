@@ -624,7 +624,7 @@ func streamListNameOnce[T any](ctx context.Context, c *Client, name string, opts
 
 	default:
 		stream.Close()
-		return fmt.Errorf("%s (%w)", resp.Header().Get("Stream-Format"), ErrInvalidStreamFormat)
+		return jsrest.Errorf(jsrest.ErrBadRequest, "%s (%w)", resp.Header().Get("Stream-Format"), ErrInvalidStreamFormat)
 	}
 }
 
