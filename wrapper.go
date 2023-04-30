@@ -8,12 +8,12 @@ import (
 )
 
 type Config struct {
-	BaseURL string `json:"baseURL"`
-	Token   string `json:"token"`
-	Shard   string `json:"shard"`
+	BaseURL string `json:"baseURL" toml:"baseURL"`
+	Token   string `json:"token" toml:"token"`
+	Shard   string `json:"shard" toml:"shard"`
 
-	Debug    bool `json:"debug"`
-	Insecure bool `json:"insecure"`
+	Debug    bool `json:"debug" toml:"debug"`
+	Insecure bool `json:"insecure" toml:"insecure"`
 }
 
 type GetUserPassFunc func() (string, string, error)
