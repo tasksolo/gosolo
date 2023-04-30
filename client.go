@@ -101,7 +101,7 @@ var (
 	ErrInvalidStreamFormat = fmt.Errorf("invalid stream format")
 )
 
-func NewClient(baseURL string) *Client {
+func NewClientDirect(baseURL string) *Client {
 	baseURL, err := url.JoinPath(baseURL, "/v1")
 	if err != nil {
 		panic(err)
@@ -117,6 +117,11 @@ func NewClient(baseURL string) *Client {
 	return &Client{
 		rst: rst,
 	}
+}
+
+func (c *Client) SetBaseURL(baseURL string) *Client {
+	c.rst.SetBaseURL(baseURL)
+	return c
 }
 
 func (c *Client) SetTLSClientConfig(cfg *tls.Config) *Client {
