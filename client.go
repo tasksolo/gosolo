@@ -122,6 +122,7 @@ func (c *Client) SetBaseURL(baseURL string) *Client {
 	}
 
 	c.rst.SetBaseURL(baseURL)
+
 	return c
 }
 
