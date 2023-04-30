@@ -2,14 +2,18 @@ package gosolo
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"net/url"
 )
 
 type Config struct {
-	BaseURL *url.URL
-	Token   string
-	Shard   string
+	BaseURL string `json:"baseURL"`
+	Token   string `json:"token"`
+	Shard   string `json:"shard"`
+
+	Debug    bool `json:"debug"`
+	Insecure bool `json:"insecure"`
 }
 
 type GetUserPassFunc func() (string, string, error)
@@ -17,14 +21,16 @@ type GetUserPassFunc func() (string, string, error)
 func NewClient(ctx context.Context, cfg *Config, getCreds GetUserPassFunc) (*Client, error) {
 	var err error
 
-	if cfg.BaseURL == nil {
-		cfg.BaseURL, err = url.Parse("https://api.solotask.io/")
-		if err != nil {
-			return nil, err
-		}
+	if cfg.BaseURL == "" {
+		cfg.BaseURL = "https://api.solotask.io/"
 	}
 
-	c := NewClientDirect(cfg.BaseURL.String()).SetDebug(true)
+	c := NewClientDirect(cfg.BaseURL).
+		SetDebug(cfg.Debug)
+
+	if cfg.Insecure {
+		c.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true}) //nolint:gosec
+	}
 
 	if cfg.Token == "" {
 		user, pass, err := getCreds()
@@ -47,7 +53,11 @@ func NewClient(ctx context.Context, cfg *Config, getCreds GetUserPassFunc) (*Cli
 		cfg.Shard = user.Shard
 	}
 
-	shardURL := *cfg.BaseURL
+	shardURL, err := url.Parse(cfg.BaseURL)
+	if err != nil {
+		return nil, err
+	}
+
 	shardURL.Host = fmt.Sprintf("%s.%s", cfg.Shard, shardURL.Host)
 
 	c.SetBaseURL(shardURL.String())

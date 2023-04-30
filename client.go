@@ -102,24 +102,25 @@ var (
 )
 
 func NewClientDirect(baseURL string) *Client {
+	c := &Client{}
+
+	c.rst = resty.New().
+		SetHeader("Accept", "application/json").
+		SetJSONEscapeHTML(false)
+
+	c.SetBaseURL(baseURL)
+
+	// TODO: SetTimeout()
+
+	return c
+}
+
+func (c *Client) SetBaseURL(baseURL string) *Client {
 	baseURL, err := url.JoinPath(baseURL, "/v1")
 	if err != nil {
 		panic(err)
 	}
 
-	rst := resty.New().
-		SetBaseURL(baseURL).
-		SetHeader("Accept", "application/json").
-		SetJSONEscapeHTML(false)
-
-	// TODO: SetTimeout()
-
-	return &Client{
-		rst: rst,
-	}
-}
-
-func (c *Client) SetBaseURL(baseURL string) *Client {
 	c.rst.SetBaseURL(baseURL)
 	return c
 }
