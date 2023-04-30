@@ -38,7 +38,6 @@ func NewClient(ctx context.Context, cfg *Config, getCreds GetUserPassFunc) (*Cli
 			return nil, err
 		}
 
-		fmt.Printf("USER=%s PASS=%s\n", user, pass)
 		c.SetBasicAuth(user, pass)
 	} else {
 		c.SetAuthToken(cfg.Token)
