@@ -4,12 +4,12 @@ go 1.19
 
 require (
 	github.com/go-resty/resty/v2 v2.7.0
-	github.com/gopatchy/jsrest v0.0.0-20230430221623-9f19b9d8dace
+	github.com/gopatchy/jsrest v0.0.0-20230511133808-abcf8276d1ad
 	github.com/gopatchy/metadata v0.0.0-20230424223338-33e58fee42bf
-	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
+	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
 )
 
 require (
 	github.com/vfaronov/httpheader v0.1.0 // indirect
-	golang.org/x/net v0.9.0 // indirect
+	golang.org/x/net v0.10.0 // indirect
 )
