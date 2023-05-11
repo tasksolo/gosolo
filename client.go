@@ -188,8 +188,8 @@ func (c *Client) TSClient(ctx context.Context) (string, error) {
 
 //// ShardServerConfig
 
-// TODO: Take CreateOpts (with at least FailFast)
 func (c *Client) CreateShardServerConfig(ctx context.Context, obj *ShardServerConfig) (*ShardServerConfig, error) {
+	// TODO: Take CreateOpts (with at least FailFast)
 	return CreateName[ShardServerConfig](ctx, c, "shardserverconfig", obj)
 }
 
@@ -197,8 +197,8 @@ func (c *Client) DeleteShardServerConfig(ctx context.Context, id string, opts *U
 	return DeleteName[ShardServerConfig](ctx, c, "shardserverconfig", id, opts)
 }
 
-// TODO: Take GetOpts or something (for FailFast)
 func (c *Client) FindShardServerConfig(ctx context.Context, shortID string) (*ShardServerConfig, error) {
+	// TODO: Take GetOpts or something (for FailFast)
 	return FindName[ShardServerConfig](ctx, c, "shardserverconfig", shortID)
 }
 
@@ -228,8 +228,8 @@ func (c *Client) StreamListShardServerConfig(ctx context.Context, opts *ListOpts
 
 //// Task
 
-// TODO: Take CreateOpts (with at least FailFast)
 func (c *Client) CreateTask(ctx context.Context, obj *Task) (*Task, error) {
+	// TODO: Take CreateOpts (with at least FailFast)
 	return CreateName[Task](ctx, c, "task", obj)
 }
 
@@ -237,8 +237,8 @@ func (c *Client) DeleteTask(ctx context.Context, id string, opts *UpdateOpts[Tas
 	return DeleteName[Task](ctx, c, "task", id, opts)
 }
 
-// TODO: Take GetOpts or something (for FailFast)
 func (c *Client) FindTask(ctx context.Context, shortID string) (*Task, error) {
+	// TODO: Take GetOpts or something (for FailFast)
 	return FindName[Task](ctx, c, "task", shortID)
 }
 
@@ -268,8 +268,8 @@ func (c *Client) StreamListTask(ctx context.Context, opts *ListOpts[Task]) (*Lis
 
 //// Token
 
-// TODO: Take CreateOpts (with at least FailFast)
 func (c *Client) CreateToken(ctx context.Context, obj *Token) (*Token, error) {
+	// TODO: Take CreateOpts (with at least FailFast)
 	return CreateName[Token](ctx, c, "token", obj)
 }
 
@@ -277,8 +277,8 @@ func (c *Client) DeleteToken(ctx context.Context, id string, opts *UpdateOpts[To
 	return DeleteName[Token](ctx, c, "token", id, opts)
 }
 
-// TODO: Take GetOpts or something (for FailFast)
 func (c *Client) FindToken(ctx context.Context, shortID string) (*Token, error) {
+	// TODO: Take GetOpts or something (for FailFast)
 	return FindName[Token](ctx, c, "token", shortID)
 }
 
@@ -308,8 +308,8 @@ func (c *Client) StreamListToken(ctx context.Context, opts *ListOpts[Token]) (*L
 
 //// User
 
-// TODO: Take CreateOpts (with at least FailFast)
 func (c *Client) CreateUser(ctx context.Context, obj *User) (*User, error) {
+	// TODO: Take CreateOpts (with at least FailFast)
 	return CreateName[User](ctx, c, "user", obj)
 }
 
@@ -317,8 +317,8 @@ func (c *Client) DeleteUser(ctx context.Context, id string, opts *UpdateOpts[Use
 	return DeleteName[User](ctx, c, "user", id, opts)
 }
 
-// TODO: Take GetOpts or something (for FailFast)
 func (c *Client) FindUser(ctx context.Context, shortID string) (*User, error) {
+	// TODO: Take GetOpts or something (for FailFast)
 	return FindName[User](ctx, c, "user", shortID)
 }
 
