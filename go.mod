@@ -4,8 +4,8 @@ go 1.19
 
 require (
 	github.com/go-resty/resty/v2 v2.7.0
-	github.com/gopatchy/jsrest v0.0.0-20230511133808-abcf8276d1ad
-	github.com/gopatchy/metadata v0.0.0-20230424223338-33e58fee42bf
+	github.com/gopatchy/jsrest v0.0.0-20230516044950-1c6d15dad16a
+	github.com/gopatchy/metadata v0.0.0-20230516044939-eed23a0903d5
 	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
 )
 
