@@ -1,6 +1,6 @@
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
-github.com/go-resty/resty/v2 v2.10.0 h1:Qla4W/+TMmv0fOeeRqzEpXPLfTUnR5HZ1+lGs+CkiCo=
-github.com/go-resty/resty/v2 v2.10.0/go.mod h1:iiP/OpA0CkcL3IGt1O0+/SIItFUbkkyw5BGXiVdTu+A=
+github.com/go-resty/resty/v2 v2.11.0 h1:i7jMfNOJYMp69lq7qozJP+bjgzfAzeOhuGlyDrqxT/8=
+github.com/go-resty/resty/v2 v2.11.0/go.mod h1:iiP/OpA0CkcL3IGt1O0+/SIItFUbkkyw5BGXiVdTu+A=
 github.com/gopatchy/jsrest v0.0.0-20230617154508-e18710a310af h1:M5Egq74wpbgGhutFw7IH+iw5oAAtbxxEv2npHLOYKyw=
 github.com/gopatchy/jsrest v0.0.0-20230617154508-e18710a310af/go.mod h1:zTKZl0qhGDSgGepL1A7mW31FJpyQZkohl4ssSXMYpro=
 github.com/gopatchy/metadata v0.0.0-20230611025918-a5568e41335d h1:1czwHuKvB0/xFMBeomUeRVa0iLI4VmjlWRbbDa32zLM=
