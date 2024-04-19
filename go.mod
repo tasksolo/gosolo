@@ -11,5 +11,5 @@ require (
 
 require (
 	github.com/vfaronov/httpheader v0.1.0 // indirect
-	golang.org/x/net v0.22.0 // indirect
+	golang.org/x/net v0.23.0 // indirect
 )
